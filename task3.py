@@ -2,7 +2,6 @@ with open("sequence.fasta", "r") as file:
     sequence = file.read()
 sequenceList = [character for character in sequence]
 dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
-print(dict)
 def swapComplements(char):
     if char == "c":
         return "g"
@@ -19,4 +18,7 @@ def complement(list, reverse=False):
             reverseList.append(complementList[i])
         return reverseList
     return complementList
-print(complement(sequenceList))
+def get_gc_content(dict):
+    return ((dict["c"]+dict["g"])/sum(dict.values())*100)
+print(dict)
+print(get_gc_content(dict))

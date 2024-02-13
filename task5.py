@@ -6,4 +6,11 @@ def binary_datastream(n):
     while len(binaryNum) < n:
         binaryNum = "0" + binaryNum
     return binaryNum
-print(binary_datastream(4))
+
+def data_corruption(datastream):
+    bit = random.randint(0, len(datastream) - 1)
+    if datastream[bit] == 0:
+        datastream[bit] = 1
+    else:
+        datastream[bit] = 0
+    return datastream
