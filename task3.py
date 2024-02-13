@@ -3,17 +3,14 @@ def read_file(name):
     #reads a sequence from a .fasta file of a given name and returns a list of the sequence's elements
     with open(name, "r") as file:
         sequence = file.read()
-    sequenceList = [character for character in sequence]
+    sequenceList = [character for character in sequence if character != "\n"]
     return sequenceList
-
-sequenceList = read_file("sequence.fasta")
 
 def count_bases(sequence):
     #takes a sequence as input and creates a dictionary with the amount of each base in the sequence
     dict = {"a":0, "t":0, "c":0, "g":0}
     dict = {nucl:sequence.count(nucl) for nucl in set(sequence)}
     return dict
-dict = count_bases(sequenceList)
 
 def swapComplements(char):
     #is passed a single nucleotide, returns its complement
@@ -32,7 +29,7 @@ def complement(list, reverse=False):
     if reverse == True:
         reverseList = []
         for i in range(len(list), 0, -1):
-            reverseList.append(complementList[i])
+            reverseList.append(complementList[i-1])
         return reverseList
     return complementList
 
@@ -63,12 +60,12 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
 
     return cpg_islands
 
-def main(infile):
-    seq = read_input_file(infile)
-    cpg_islands = detect_cpg_islands(seq, window_size=200, gc_threshold=50.0)
-    print("GC Islands:")
-    for start, end, gc_content in cpg_islands:
-        print(f"Start: {start}, End: {end}, GC Content: {gc_content:.2f}%")
+#def main(infile):
+    #seq = read_input_file(infile)
+    #cpg_islands = detect_cpg_islands(seq, window_size=200, gc_threshold=50.0)
+    #print("GC Islands:")
+    #for start, end, gc_content in cpg_islands:
+        #print(f"Start: {start}, End: {end}, GC Content: {gc_content:.2f}%")
 
 def mean(list):
     return sum(list) / len(list)
@@ -93,13 +90,12 @@ for argument in sys.argv:
         sequences = []
         for i in range((argNumber+1),len(sys.argv)):
             arg = sys.argv[i]
-            if arg[:1] != "--":
+            if arg[:2] != "--":
                 sequences.append(read_file(arg))
             else:
                 break
         if sequences == []:
             print("Error: No files provided")
-            sequences = [sequenceList]
     elif argument == "--output":
         writeToFile = 1
     elif argument == "--base-count":
