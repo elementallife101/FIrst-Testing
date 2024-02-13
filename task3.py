@@ -51,13 +51,26 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
     
     if window_size > 1:
         for i in range(len(sequence) - (window_size - 2)):
-            window = sequence[i:(i + window_size - 1)]
+            window = sequence[i:(i + window_size)]
             sequenceList = [character for character in window]
+            dict = {"a":0, "t":0, "c":0, "g":0}
+            print(dict)
             dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
-            test_value = get_gc_content(dict)
-            if test_value > gc_threshold:
-                cpg_islands.append(window)
-
+            print(dict)
+            ### ERROR
+            while True:
+                try:
+                    test_value = get_gc_content(dict)
+                    print(test_value)
+                    if test_value > gc_threshold:
+                        cpg_islands.append(window)
+                    break
+                except KeyError:
+                    try:
+                        if dict["c"] > -1:
+                            dict["g"] = 0
+                    except KeyError:
+                        dict["c"] = 0
     return cpg_islands
 
 #def main(infile):
@@ -76,7 +89,10 @@ def calculate_mean_gc_content(sequence, window_size):
         for i in range(len(sequence) - (window_size - 2)):
             window = sequence[i:(i + window_size - 1)]
             sequenceList = [character for character in window]
+            dict = {"a":0, "t":0, "c":0, "g":0}
+            print(dict)
             dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
+            print(dict)
             test_value = get_gc_content(dict)
             mean_list.append(test_value)
         return mean(mean_list)
