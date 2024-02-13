@@ -39,6 +39,51 @@ def complement(list, reverse=False):
 def get_gc_content(dict):
     return ((dict["c"]+dict["g"])/sum(dict.values())*100)
 
+'''
+So this function is designed for Step 5 - UNTESTED.
+Inputs:
+Sequence - The DNA Sequence (ACGTGTGTCAGT...)
+Window_Size - The size of each window for testing
+GC_Threshold - The point at which GC levels above it count as an island
+
+Output:CPG_islands, a list containing all the known islands within the given sequence
+
+'''
+def detect_gc_islands(sequence, window_size, gc_threshold):
+    cpg_islands = []
+    
+    if window_size > 1:
+        for i in range(len(sequence) - (window_size - 2)):
+            window = sequence[i:(i + window_size - 1)]
+            sequenceList = [character for character in window]
+            dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
+            test_value = get_gc_content(dict)
+            if test_value > gc_threshold:
+                cpg_islands.append(window)
+
+    return cpg_islands
+
+def main(infile):
+    seq = read_input_file(infile)
+    cpg_islands = detect_cpg_islands(seq, window_size=200, gc_threshold=50.0)
+    print("GC Islands:")
+    for start, end, gc_content in cpg_islands:
+        print(f"Start: {start}, End: {end}, GC Content: {gc_content:.2f}%")
+
+def mean(list):
+    return sum(list) / len(list)
+
+def calculate_mean_gc_content(sequence, window_size):
+    if window_size > 1:
+        mean_list = []
+        for i in range(len(sequence) - (window_size - 2)):
+            window = sequence[i:(i + window_size - 1)]
+            sequenceList = [character for character in window]
+            dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
+            test_value = get_gc_content(dict)
+            mean_list.append(test_value)
+        return mean(mean_list)
+    
 argNumber = -1
 writeToFile = 0
 output = []
