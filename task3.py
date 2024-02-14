@@ -9,7 +9,8 @@ def read_file(name):
 def count_bases(sequence):
     #takes a sequence as input and creates a dictionary with the amount of each base in the sequence
     dict = {"a":0, "t":0, "c":0, "g":0}
-    dict = {nucl:sequence.count(nucl) for nucl in set(sequence)}
+    for base in set(sequence):
+        dict[base] = sequence.count(base)
     return dict
 
 def swapComplements(char):
@@ -48,22 +49,20 @@ Output:CPG_islands, a list containing all the known islands within the given seq
 '''
 def detect_gc_islands(sequence, window_size, gc_threshold):
     cpg_islands = []
+    island_positions = []
     
     if window_size > 1:
         for i in range(len(sequence) - (window_size - 2)):
             window = sequence[i:(i + window_size)]
             sequenceList = [character for character in window]
-            dict = {"a":0, "t":0, "c":0, "g":0}
-            print(dict)
-            dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
-            print(dict)
+            dict = count_bases(sequenceList)
             ### ERROR
             while True:
                 try:
                     test_value = get_gc_content(dict)
-                    print(test_value)
                     if test_value > gc_threshold:
                         cpg_islands.append(window)
+                        island_positions.append(i)
                     break
                 except KeyError:
                     try:
@@ -71,7 +70,19 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
                             dict["g"] = 0
                     except KeyError:
                         dict["c"] = 0
-    return cpg_islands
+    island_positions_final = []
+    islandTotal = 0
+    for position in island_positions:
+        if position+1 in island_positions and position -1 in island_positions:
+            continue
+        elif position+1 in island_positions:
+            island_positions_final.append(position)
+            island_positions_final.append("-")
+            islandTotal+= 1
+        elif position-1 in island_positions:
+            island_positions_final.append(position)
+
+    return [islandTotal, island_positions_final]
 
 #def main(infile):
     #seq = read_input_file(infile)
@@ -80,26 +91,20 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
     #for start, end, gc_content in cpg_islands:
         #print(f"Start: {start}, End: {end}, GC Content: {gc_content:.2f}%")
 
-def mean(list):
-    return sum(list) / len(list)
-
 def calculate_mean_gc_content(sequence, window_size):
     if window_size > 1:
-        mean_list = []
+        total = 0
         for i in range(len(sequence) - (window_size - 2)):
             window = sequence[i:(i + window_size - 1)]
-            sequenceList = [character for character in window]
-            dict = {"a":0, "t":0, "c":0, "g":0}
-            print(dict)
-            dict = {nucl:sequenceList.count(nucl) for nucl in set(sequenceList)}
-            print(dict)
+            dict = count_bases(window)
             test_value = get_gc_content(dict)
-            mean_list.append(test_value)
-        return mean(mean_list)
+            total += test_value
+        return total/i
     
 argNumber = -1
 writeToFile = 0
 output = []
+window_size = 10
 for argument in sys.argv:
     argNumber += 1
     if argument == "--input":
@@ -128,7 +133,14 @@ for argument in sys.argv:
         output.append("GC content of each sequence:")
         for sequence in sequences:
             output.append(get_gc_content(sequence))
-    
+    elif argument == "--number-of-islands":
+        output.append("Number of GC islands and list of positions of islands")
+        for sequence in sequences:
+            mean = calculate_mean_gc_content(sequence, window_size)
+            gc_threshold = 1.5*mean
+            islandData = detect_gc_islands(sequence, window_size, gc_threshold)
+            output.append(islandData[0])
+            output.append(islandData[1])
 if writeToFile == 0:
     for item in output:
         print(item)
