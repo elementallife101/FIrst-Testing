@@ -103,7 +103,7 @@ def calculate_mean_gc_content(sequence, window_size):
             dict = count_bases(window)
             test_value = get_gc_content(dict)
             total += test_value
-        return total/(i + 1)
+    return total/(i + 1)
     
 argNumber = -1
 writeToFile = 0
