@@ -63,7 +63,7 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
                     test_value = get_gc_content(dict)
                     if test_value > gc_threshold:
                         cpg_islands.append(window)
-                        island_positions.append(i)
+                        island_positions.append([i, i+window_size])
                     break
                 except KeyError:
                     try:
@@ -71,19 +71,7 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
                             dict["g"] = 0
                     except KeyError:
                         dict["c"] = 0
-    island_positions_final = []
-    islandTotal = 0
-    for position in island_positions:
-        if position+1 in island_positions and position -1 in island_positions:
-            continue
-        elif position+1 in island_positions:
-            island_positions_final.append(position)
-            island_positions_final.append("-")
-            islandTotal+= 1
-        elif position-1 in island_positions:
-            island_positions_final.append(position)
-
-    return [islandTotal, island_positions_final]
+    return island_positions
 
 #def main(infile):
     #seq = read_input_file(infile)
@@ -143,9 +131,10 @@ for argument in sys.argv:
         for sequence in sequences:
             mean = calculate_mean_gc_content(sequence, window_size)
             gc_threshold = 1.5*mean
-            islandData = detect_gc_islands(sequence, window_size, gc_threshold)
-            output.append(islandData[0])
-            output.append(islandData[1])
+            print(gc_threshold)
+            island_positions = detect_gc_islands(sequence, window_size, gc_threshold)
+            print(len(island_positions))
+            print(island_positions)
 if writeToFile == 0:
     for item in output:
         print(item)
