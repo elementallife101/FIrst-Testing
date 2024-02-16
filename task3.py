@@ -38,7 +38,7 @@ def get_gc_content(dict):
     return ((dict["c"]+dict["g"])/sum(dict.values())*100)
 
 '''
-So this function is designed for Step 5 - UNTESTED.
+So this function is designed for Step 5 - HAS PARTIALLY STOPPED WORKING DUE TO EARLIER CODE CHANGES.
 Inputs:
 Sequence - The DNA Sequence (ACGTGTGTCAGT...)
 Window_Size - The size of each window for testing
@@ -91,15 +91,19 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
     #for start, end, gc_content in cpg_islands:
         #print(f"Start: {start}, End: {end}, GC Content: {gc_content:.2f}%")
 
+"""
+This version of task 6 works.
+"""
 def calculate_mean_gc_content(sequence, window_size):
     if window_size > 1:
         total = 0
-        for i in range(len(sequence) - (window_size - 2)):
-            window = sequence[i:(i + window_size - 1)]
+        for i in range(len(sequence) - (window_size - 1)):
+            window = sequence[i:(i + window_size)]
+            print(window)
             dict = count_bases(window)
             test_value = get_gc_content(dict)
             total += test_value
-        return total/i
+        return total/(i + 1)
     
 argNumber = -1
 writeToFile = 0
