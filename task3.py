@@ -49,7 +49,7 @@ Output:CPG_islands, a list containing all the known islands within the given seq
 
 '''
 def detect_gc_islands(sequence, window_size, gc_threshold):
-    cpg_islands = []
+    #Takes a sequence list, the size of the window and the gc threshold as inputs, returns a list of island positions.
     island_positions = []
     
     if window_size > 1:
@@ -57,12 +57,10 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
             window = sequence[i:(i + window_size)]
             sequenceList = [character for character in window]
             dict = count_bases(sequenceList)
-            ### ERROR
             while True:
                 try:
                     test_value = get_gc_content(dict)
                     if test_value > gc_threshold:
-                        cpg_islands.append(window)
                         island_positions.append([i, i+window_size])
                     break
                 except KeyError:
@@ -84,6 +82,7 @@ def detect_gc_islands(sequence, window_size, gc_threshold):
 This version of task 6 works.
 """
 def calculate_mean_gc_content(sequence, window_size):
+#takes a sequence list and a window size as input, returns a mean for the gc content of a given window
     if window_size > 1:
         total = 0
         for i in range(len(sequence) - (window_size - 1)):
@@ -101,6 +100,7 @@ window_size = 10
 for argument in sys.argv:
     argNumber += 1
     if argument == "--input":
+        #if input is detected as a command line argument, 
         sequences = []
         for i in range((argNumber+1),len(sys.argv)):
             arg = sys.argv[i]
