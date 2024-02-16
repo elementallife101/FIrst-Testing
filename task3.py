@@ -87,7 +87,6 @@ def calculate_mean_gc_content(sequence, window_size):
         total = 0
         for i in range(len(sequence) - (window_size - 1)):
             window = sequence[i:(i + window_size)]
-            print(window)
             dict = count_bases(window)
             test_value = get_gc_content(dict)
             total += test_value
@@ -100,7 +99,7 @@ window_size = 10
 for argument in sys.argv:
     argNumber += 1
     if argument == "--input":
-        #if input is detected as a command line argument, 
+        #Take the next up the 3 arguments as text files to read sequences from unless there are less than 3 more arguments or a new command is detected
         sequences = []
         for i in range((argNumber+1),len(sys.argv)):
             arg = sys.argv[i]
@@ -111,34 +110,39 @@ for argument in sys.argv:
         if sequences == []:
             print("Error: No files provided")
     elif argument == "--output":
+        #change variable WriteToFile to 1 for later when the output is processed
         writeToFile = 1
     elif argument == "--base-count":
+        #outputs the base count of each inputted sequence
         output.append("Base Counts:")
         for sequence in sequences:
             output.append(count_bases(sequence))
     elif argument == "--reverse-complement":
+        #Outputs the first 50 elements of each sequence and the first 50 elements of the reverse complement of each sequence
         output.append("First 50 elements of each sequence followed by first 50 elements of the reverse complement of that sequence:")
         for sequence in sequences:
             complementSequence = complement(sequence, True)
             output.append(sequence[:49])
             output.append(complementSequence[:49])
     elif argument == "--GC-content":
+        #outputs gc content of each sequence
         output.append("GC content of each sequence:")
         for sequence in sequences:
             output.append(get_gc_content(sequence))
     elif argument == "--number-of-islands":
+        #calculates the threshold as 1.5*(the mean gc content) and then outputs the number of islands and their positions.
         output.append("Number of GC islands and list of positions of islands")
         for sequence in sequences:
             mean = calculate_mean_gc_content(sequence, window_size)
             gc_threshold = 1.5*mean
-            print(gc_threshold)
             island_positions = detect_gc_islands(sequence, window_size, gc_threshold)
-            print(len(island_positions))
-            print(island_positions)
+            output.append(len(island_positions))
+            output.append(island_positions)
 if writeToFile == 0:
     for item in output:
         print(item)
 elif writeToFile == 1:
+    #writes output to file with random name
     with open("Output" + str(random.randint(10000, 99999)) + ".txt", "x") as file:
         for item in output:
             file.write(str(item) + "\n")
