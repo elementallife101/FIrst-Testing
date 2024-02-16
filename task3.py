@@ -1,4 +1,5 @@
 import sys
+import random
 def read_file(name):
     #reads a sequence from a .fasta file of a given name and returns a list of the sequence's elements
     with open(name, "r") as file:
@@ -148,5 +149,9 @@ for argument in sys.argv:
 if writeToFile == 0:
     for item in output:
         print(item)
-        
+elif writeToFile == 1:
+    with open("Output" + str(random.randint(10000, 99999)) + ".txt", "x") as file:
+        for item in output:
+            file.write(str(item) + "\n")
+
         
